@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>호텔 지원 관리자 모드</title>
-    <script src="https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6/babel.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
-<body class="bg-gray-100">
+<body>
     <div id="root"></div>
 
     <script type="text/babel">
@@ -76,98 +76,100 @@
             // 필터링된 티켓 목록
             const filteredTickets = tickets.filter(ticket => ticket.status === filter);
 
-            return (
-                <div className="container mx-auto p-6">
-                    <h1 className="text-3xl font-bold mb-6">호텔 지원 관리자 대시보드</h1>
+            return React.createElement(
+                'div', 
+                { className: 'container mx-auto p-6' },
+                React.createElement('h1', { className: 'text-3xl font-bold mb-6' }, '호텔 지원 관리자 대시보드'),
 
-                    {/* 상태별 필터 */}
-                    <div className="mb-4 flex space-x-2">
-                        {['pending', 'in_progress', 'resolved', 'closed'].map(status => (
-                            <button
-                                key={status}
-                                onClick={() => setFilter(status)}
-                                className={`px-4 py-2 rounded ${
+                // 상태별 필터
+                React.createElement(
+                    'div', 
+                    { className: 'mb-4 flex space-x-2' },
+                    ['pending', 'in_progress', 'resolved', 'closed'].map(status => 
+                        React.createElement(
+                            'button',
+                            {
+                                key: status,
+                                onClick: () => setFilter(status),
+                                className: `px-4 py-2 rounded ${
                                     filter === status 
                                         ? 'bg-blue-500 text-white' 
                                         : 'bg-gray-200 text-gray-700'
-                                }`}
-                            >
-                                {status === 'pending' && '대기 중'}
-                                {status === 'in_progress' && '처리 중'}
-                                {status === 'resolved' && '해결됨'}
-                                {status === 'closed' && '닫힘'}
-                            </button>
-                        ))}
-                    </div>
+                                }`
+                            },
+                            status === 'pending' ? '대기 중' :
+                            status === 'in_progress' ? '처리 중' :
+                            status === 'resolved' ? '해결됨' : '닫힘'
+                        )
+                    )
+                ),
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {/* 티켓 목록 */}
-                        <div className="md:col-span-1 space-y-2">
-                            {filteredTickets.map(ticket => (
-                                <div 
-                                    key={ticket.id}
-                                    onClick={() => setSelectedTicket(ticket)}
-                                    className={`p-4 rounded cursor-pointer ${
+                // 본문 그리드
+                React.createElement(
+                    'div', 
+                    { className: 'grid grid-cols-1 md:grid-cols-3 gap-4' },
+                    // 티켓 목록
+                    React.createElement(
+                        'div', 
+                        { className: 'md:col-span-1 space-y-2' },
+                        filteredTickets.map(ticket => 
+                            React.createElement(
+                                'div', 
+                                {
+                                    key: ticket.id,
+                                    onClick: () => setSelectedTicket(ticket),
+                                    className: `p-4 rounded cursor-pointer ${
                                         selectedTicket?.id === ticket.id 
                                             ? 'bg-blue-100' 
                                             : 'bg-white'
-                                    } shadow`}
-                                >
-                                    <p className="font-bold">#{ticket.id}</p>
-                                    <p>객실: {ticket.roomNumber}</p>
-                                    <p className="text-sm text-gray-600">{ticket.message}</p>
-                                </div>
-                            ))}
-                        </div>
+                                    } shadow`
+                                },
+                                React.createElement('p', { className: 'font-bold' }, `#${ticket.id}`),
+                                React.createElement('p', null, `객실: ${ticket.roomNumber}`),
+                                React.createElement('p', { className: 'text-sm text-gray-600' }, ticket.message)
+                            )
+                        )
+                    ),
 
-                        {/* 티켓 상세 및 답변 */}
-                        <div className="md:col-span-2 bg-white p-6 rounded shadow">
-                            {selectedTicket ? (
-                                <div>
-                                    <h2 className="text-2xl font-bold mb-4">
-                                        티켓 상세 정보 (#{selectedTicket.id})
-                                    </h2>
-                                    
-                                    <div className="mb-4">
-                                        <p><strong>객실 번호:</strong> {selectedTicket.roomNumber}</p>
-                                        <p><strong>언어:</strong> {selectedTicket.language}</p>
-                                        <p><strong>문제 유형:</strong> 
-                                            {selectedTicket.issueType === 'key' && '키 분실'}
-                                            {selectedTicket.issueType === 'room' && '객실 문제'}
-                                            {selectedTicket.issueType === 'checkin' && '체크인 문제'}
-                                            {selectedTicket.issueType === 'wifi' && 'Wi-Fi 연결'}
-                                        </p>
-                                        <p><strong>문의 내용:</strong> {selectedTicket.message}</p>
-                                        <p><strong>상태:</strong> 
-                                            {selectedTicket.status === 'pending' && '대기 중'}
-                                            {selectedTicket.status === 'in_progress' && '처리 중'}
-                                            {selectedTicket.status === 'resolved' && '해결됨'}
-                                            {selectedTicket.status === 'closed' && '닫힘'}
-                                        </p>
-                                    </div>
+                    // 티켓 상세 및 답변
+                    React.createElement(
+                        'div', 
+                        { className: 'md:col-span-2 bg-white p-6 rounded shadow' },
+                        selectedTicket ? React.createElement(
+                            'div', 
+                            null,
+                            React.createElement('h2', { className: 'text-2xl font-bold mb-4' }, `티켓 상세 정보 (#${selectedTicket.id})`),
+                            
+                            React.createElement(
+                                'div', 
+                                { className: 'mb-4' },
+                                React.createElement('p', null, React.createElement('strong', null, '객실 번호: '), selectedTicket.roomNumber),
+                                React.createElement('p', null, React.createElement('strong', null, '언어: '), selectedTicket.language),
+                                React.createElement('p', null, 
+                                    React.createElement('strong', null, '문제 유형: '),
+                                    selectedTicket.issueType === 'key' ? '키 분실' :
+                                    selectedTicket.issueType === 'room' ? '객실 문제' :
+                                    selectedTicket.issueType === 'checkin' ? '체크인 문제' : 'Wi-Fi 연결'
+                                ),
+                                React.createElement('p', null, React.createElement('strong', null, '문의 내용: '), selectedTicket.message),
+                                React.createElement('p', null, 
+                                    React.createElement('strong', null, '상태: '),
+                                    selectedTicket.status === 'pending' ? '대기 중' :
+                                    selectedTicket.status === 'in_progress' ? '처리 중' :
+                                    selectedTicket.status === 'resolved' ? '해결됨' : '닫힘'
+                                )
+                            ),
 
-                                    {/* 답변 입력 */}
-                                    <textarea 
-                                        value={replyMessage}
-                                        onChange={(e) => setReplyMessage(e.target.value)}
-                                        placeholder="고객에게 보낼 답변을 작성해주세요"
-                                        className="w-full p-2 border rounded mb-4 h-32"
-                                    ></textarea>
+                            // 답변 입력
+                            React.createElement('textarea', {
+                                value: replyMessage,
+                                onChange: (e) => setReplyMessage(e.target.value),
+                                placeholder: '고객에게 보낼 답변을 작성해주세요',
+                                className: 'w-full p-2 border rounded mb-4 h-32'
+                            }),
 
-                                    {/* 상태 변경 및 답변 버튼 */}
-                                    <div className="flex space-x-2">
-                                        {selectedTicket.status === 'pending' && (
-                                            <button 
-                                                onClick={() => updateTicketStatus(selectedTicket.id, 'in_progress')}
-                                                className="bg-blue-500 text-white px-4 py-2 rounded"
-                                            >
-                                                처리 시작
-                                            </button>
-                                        )}
-                                        
-                                        <button 
-                                            onClick={sendReply}
-                                            className="bg-green-500 text-white px-4 py-2 rounded"
-                                            disabled={!replyMessage}
-                                        >
-                                            답
+                            // 상태 변경 및 답변 버튼
+                            React.createElement(
+                                'div', 
+                                { className: 'flex space-x-2' },
+                                selectedTicket.status === 'pending' && React.
